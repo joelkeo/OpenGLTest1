@@ -1,0 +1,14 @@
+# Ignore build folders
+cmake-build-debug/
+cmake-build-release/
+
+# Ignore IDE-specific files
+.idea/
+.vscode/
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# juce repo
+libs/JUCE/
