@@ -2,22 +2,15 @@
 #include "PluginEditor.h"
 
 OpenGLTest1AudioProcessorEditor::OpenGLTest1AudioProcessorEditor(OpenGLTest1AudioProcessor& p)
-    : AudioProcessorEditor(&p), audioProcessor(p)
-{
+    : AudioProcessorEditor(&p), audioProcessor(p) {
     setSize(400, 300);
+    addAndMakeVisible(&waveform);
 }
 
 OpenGLTest1AudioProcessorEditor::~OpenGLTest1AudioProcessorEditor() {}
 
-void OpenGLTest1AudioProcessorEditor::paint(juce::Graphics& g)
-{
-    g.fillAll(juce::Colours::black);
-    g.setColour(juce::Colours::white);
-    g.setFont(18.0f);
-    g.drawFittedText("OpenGLTest1 Plugin", getLocalBounds(), juce::Justification::centred, 1);
-}
+void OpenGLTest1AudioProcessorEditor::paint(juce::Graphics& g) {}
 
-void OpenGLTest1AudioProcessorEditor::resized()
-{
-    // Layout child components here
+void OpenGLTest1AudioProcessorEditor::resized() {
+    waveform.setBounds(getLocalBounds());
 }

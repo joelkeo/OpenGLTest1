@@ -1,17 +1,28 @@
 cmake_minimum_required(VERSION 3.22)
 
+# MacOS properties
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "Minimum OS X deployment target")
+# Windows MultiThreaded debug behavior based on CONFIG
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
+# basic project info (including setting PROJECT_NAME)
 project(OpenGLTest1 VERSION 1.0.0 LANGUAGES C CXX)
+
+# include embedded JUCE dependency
 add_subdirectory("libs/JUCE")
+
+# IDE src organization
 set_property(GLOBAL PROPERTY USE_FOLDERS YES)
+# IDE JUCE organization
 option(JUCE_ENABLE_MODULE_SOURCE_GROUPS "Enable Module Source Groups" ON)
 
+# keep it compiler independent
 set(CMAKE_CXX_EXTENSIONS OFF)
+
 set(CMAKE_CXX_STANDARD 20)
 
 # generate PDB/dSYM files for the Release build
+# setting system & CONFIG dependent compiler options
 if(MSVC)
     add_compile_options("$<$<NOT:$<CONFIG:Debug>>:/Zi>")
     add_link_options("$<$<NOT:$<CONFIG:Debug>>:/DEBUG>")
@@ -41,17 +52,21 @@ juce_add_plugin(${PROJECT_NAME}
         COPY_PLUGIN_AFTER_BUILD TRUE
         FORMATS AU VST3 Standalone
         PRODUCT_NAME "OpenGLTest1"
+        VST3_COPY_DIR "C:/Program Files/Common Files/VST3"
 )
 
 juce_generate_juce_header(${PROJECT_NAME})
 
+# globbed sources
 file(GLOB SOURCE_FILES CONFIGURE_DEPENDS
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
 )
 
+# juce module hookup stuff
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCE_FILES})
 
+# basic juce options
 target_compile_definitions(${PROJECT_NAME} PUBLIC
         JUCE_WEB_BROWSER=0
         JUCE_USE_CURL=0
@@ -62,10 +77,12 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC
         DONT_SET_USING_JUCE_NAMESPACE=1
 )
 
+# included modules
 target_link_libraries(${PROJECT_NAME}
         PRIVATE
         juce::juce_audio_utils
         juce::juce_dsp
+        juce::juce_opengl
         PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
