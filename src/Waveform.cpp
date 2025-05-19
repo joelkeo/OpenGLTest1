@@ -29,6 +29,8 @@ void Waveform::newOpenGLContextCreated()
     init_assignLocalShaderData();
     // STEP 4: assign shaders
     init_linkShaders();
+    // MY CODE:
+    iTimeLocation = shaderProgram->getUniformIDFromName("iTime");
 }
 
 void Waveform::renderOpenGL()
@@ -39,6 +41,9 @@ void Waveform::renderOpenGL()
     shaderProgram->use();
     // STEP3: use buffers
     // render_glBindBuffers(); <-- was in original code, but doesn't seem to be needed
+    // MY CODE:
+    float currentTime = (float) juce::Time::getMillisecondCounterHiRes() / 1000.f;
+    shaderProgram->setUniform("iTime", currentTime);
     // STEP4: assign attrib data metadata
     render_glEnableAttributes();
     // STEP 5: draw
@@ -68,18 +73,18 @@ void Waveform::init_glBindBuffers() {
 void Waveform::init_assignLocalVertexData() {
     // Create 4 vertices each with a different colour.
     vertexBuffer = {{
-            { -0.5f, 0.5f },
+            { -.8f, 0.8f },
             { 1.f, 0.f, 0.f, 1.f }},
         {
-    { 0.5f, 0.5f },
+    { 0.8f, 0.8f },
                 { 1.f, 0.5f, 0.f, 1.f }},
 
         {
-            { 0.5f, -0.5f },
+            { 0.8f, -0.8f },
                 { 1.f, 1.f, 0.f, 1.f }},
 
         {
-            { -0.5f, -0.5f },
+            { -0.8f, -0.8f },
                 { 1.f, 0.f, 1.f, 1.f }}
     };
 
@@ -137,12 +142,19 @@ void Waveform::init_assignLocalShaderData() {
             // The value that was output by the vertex shader.
             // This MUST have the exact same name that we used in the vertex shader.
             in vec4 fragColour;
-
+uniform float iTime;
             void main()
             {
-                // Set the fragment's colour to the attribute passed in by the
-                // vertex shader.
-                gl_FragColor = fragColour;
+                 // Example base color
+    vec4 baseColor = vec4(0.3, 0.6, 0.9, 1.0);
+
+    // Modulate color brightness with sine wave over time
+    float brightness = 0.5 + 0.5 * sin(5. * iTime);
+
+    // Apply modulation
+    vec4 fragColour = baseColor * brightness;
+
+    gl_FragColor = fragColour;
             }
         )";
 }

@@ -3,7 +3,7 @@
 
 OpenGLTest1AudioProcessorEditor::OpenGLTest1AudioProcessorEditor(OpenGLTest1AudioProcessor& p)
     : AudioProcessorEditor(&p), audioProcessor(p) {
-    setSize(400, 300);
+    setSize(1200, 675);
     addAndMakeVisible(&waveform);
 }
 

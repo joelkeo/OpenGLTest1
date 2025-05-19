@@ -47,6 +47,9 @@ private:
     void render_glEnableAttributes();
     void render_glDrawElements();
     void render_glDisableAttributes();
+
+    // UNIFROMS
+    GLint iTimeLocation;
 };
 
 
