@@ -67,27 +67,20 @@ void Waveform::init_glBindBuffers() {
 }
 void Waveform::init_assignLocalVertexData() {
     // Create 4 vertices each with a different colour.
-    vertexBuffer = {
-        // Vertex 0
+    vertexBuffer = {{
+            { -0.5f, 0.5f },
+            { 1.f, 0.f, 0.f, 1.f }},
         {
-            { -0.5f, 0.5f },        // (-0.5, 0.5)
-            { 1.f, 0.f, 0.f, 1.f }  // Red
-        },
-        // Vertex 1
+    { 0.5f, 0.5f },
+                { 1.f, 0.5f, 0.f, 1.f }},
+
         {
-                { 0.5f, 0.5f },         // (0.5, 0.5)
-                { 1.f, 0.5f, 0.f, 1.f } // Orange
-        },
-        // Vertex 2
+            { 0.5f, -0.5f },
+                { 1.f, 1.f, 0.f, 1.f }},
+
         {
-                { 0.5f, -0.5f },        // (0.5, -0.5)
-                { 1.f, 1.f, 0.f, 1.f }  // Yellow
-        },
-        // Vertex 3
-        {
-                { -0.5f, -0.5f },       // (-0.5, -0.5)
-                { 1.f, 0.f, 1.f, 1.f }  // Purple
-        }
+            { -0.5f, -0.5f },
+                { 1.f, 0.f, 1.f, 1.f }}
     };
 
     // We need 6 indices, 1 for each corner of the two triangles.
@@ -156,19 +149,11 @@ void Waveform::init_assignLocalShaderData() {
 void Waveform::init_linkShaders() {
     // Create an instance of OpenGLShaderProgram
     shaderProgram.reset(new juce::OpenGLShaderProgram(openGLContext));
-
-    // Compile and link the shader.
-    // Each of these methods will return false if something goes wrong so we'll
-    // wrap them in an if statement
     if (shaderProgram->addVertexShader(vertexShader)
         && shaderProgram->addFragmentShader(fragmentShader)
         && shaderProgram->link())
-    {
-        // No compilation errors - set the shader program to be active
-        shaderProgram->use();
-    }
-    else
-    {
+    {}
+    else {
         // Oops - something went wrong with our shaders!
         // Check the output window of your IDE to see what the error might be.
         jassertfalse;
