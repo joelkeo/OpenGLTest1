@@ -34,6 +34,22 @@ bool OpenGLTest1AudioProcessor::isBusesLayoutSupported(const BusesLayout& layout
 }
 
 void OpenGLTest1AudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer&) {
+    DBG("TOP OF PROCESS BLOCK");
+    auto playHead = getPlayHead();
+    float foundPosition = 0.f;
+    if (playHead) {
+        auto position = playHead->getPosition();
+        if (position) {
+            auto optPosition = position->getPpqPosition();
+            if (optPosition) {
+                foundPosition = *optPosition;
+            }
+        }
+    }
+    rmsBuffer.addData(buffer, foundPosition);
+    for (int i = 0; i < 10; i++) {
+        DBG("SAMPLE: " + juce::String(i) + ", val: " + juce::String(rmsBuffer.rmsBuffer[i]));
+    }
     for (int channel = 0; channel < getTotalNumInputChannels(); ++channel)
         buffer.clear(channel, 0, buffer.getNumSamples());
 }

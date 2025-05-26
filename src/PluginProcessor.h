@@ -2,6 +2,8 @@
 
 #include <JuceHeader.h>
 
+#include "RhythmicRMSBuffer.h"
+
 class OpenGLTest1AudioProcessor : public juce::AudioProcessor
 {
 public:
@@ -33,7 +35,7 @@ public:
 
     void getStateInformation(juce::MemoryBlock& destData) override;
     void setStateInformation(const void* data, int sizeInBytes) override;
-
+    RhythmicRMSBuffer rmsBuffer;
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OpenGLTest1AudioProcessor)
 };

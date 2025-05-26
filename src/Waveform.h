@@ -8,14 +8,17 @@
 
 #include <JuceHeader.h>
 #include <juce_opengl/juce_opengl.h>
-
+#include "HOTGLSL.h"
+#include "RhythmicRMSBuffer.h"
 class Waveform : public juce::Component, public juce::OpenGLRenderer {
 public:
-    Waveform();
+    Waveform(RhythmicRMSBuffer& rmsBuffer);
     void newOpenGLContextCreated() override;
     void renderOpenGL() override;
     void openGLContextClosing() override;
 private:
+    // rms buffer
+    RhythmicRMSBuffer& rmsBuffer;
     // context: should be recieved from PARENT if this isn't the only openGLContext
     juce::OpenGLContext openGLContext;
     // reference to buffers
@@ -35,6 +38,8 @@ private:
     juce::String fragmentShader;
     // shader program
     std::unique_ptr<juce::OpenGLShaderProgram> shaderProgram;
+    HotGLSL hotGLSL = HotGLSL("C:/Users/chels/Downloads/basement_audio/scratchpad/OpenGLTest1/glsl/OpenGLTest1.vert",
+                    "C:/Users/chels/Downloads/basement_audio/scratchpad/OpenGLTest1/glsl/OpenGLTest1.frag");
     // INIT HELPERS:
     void init_glGenBuffers();
     void init_glBindBuffers();

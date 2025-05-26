@@ -2,7 +2,8 @@
 #include "PluginEditor.h"
 
 OpenGLTest1AudioProcessorEditor::OpenGLTest1AudioProcessorEditor(OpenGLTest1AudioProcessor& p)
-    : AudioProcessorEditor(&p), audioProcessor(p) {
+    : AudioProcessorEditor(&p), audioProcessor(p),
+waveform(p.rmsBuffer) {
     setSize(1200, 675);
     addAndMakeVisible(&waveform);
 }

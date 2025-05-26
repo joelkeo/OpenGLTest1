@@ -3,11 +3,11 @@
 //
 
 #include "Waveform.h"
-Waveform::Waveform()
+Waveform::Waveform(RhythmicRMSBuffer& rmsBuffer) : rmsBuffer(rmsBuffer)
 {
     // IM_JIMM BOILERPLATE
     // Indicates that no part of this Component is transparent.
-    setOpaque(true);
+    //setOpaque(true); <- in Jimmi's code, but forces a paint override, which I don't want
     // Set this instance as the renderer for the context.
     openGLContext.setRenderer(this);
     // Tell the context to repaint on a loop.
@@ -30,7 +30,7 @@ void Waveform::newOpenGLContextCreated()
     // STEP 4: assign shaders
     init_linkShaders();
     // MY CODE:
-    iTimeLocation = shaderProgram->getUniformIDFromName("iTime");
+    // iTimeLocation = shaderProgram->getUniformIDFromName("iTime");
 }
 
 void Waveform::renderOpenGL()
@@ -38,12 +38,12 @@ void Waveform::renderOpenGL()
     // STEP1: Clear the screen by filling it with black.
     juce::OpenGLHelpers::clear(juce::Colours::black);
     // STEP2: compute shaders
-    shaderProgram->use();
+    hotGLSL.callInRenderLoop(openGLContext);
     // STEP3: use buffers
     // render_glBindBuffers(); <-- was in original code, but doesn't seem to be needed
     // MY CODE:
     float currentTime = (float) juce::Time::getMillisecondCounterHiRes() / 1000.f;
-    shaderProgram->setUniform("iTime", currentTime);
+    hotGLSL.getShaderProgram()->setUniform("iTime", currentTime);
     // STEP4: assign attrib data metadata
     render_glEnableAttributes();
     // STEP 5: draw
@@ -146,7 +146,7 @@ uniform float iTime;
             void main()
             {
                  // Example base color
-    vec4 baseColor = vec4(0.3, 0.6, 0.9, 1.0);
+    vec4 baseColor = vec4(0.3, 0.6, 0.9, 1.0)
 
     // Modulate color brightness with sine wave over time
     float brightness = 0.5 + 0.5 * sin(5. * iTime);
@@ -159,12 +159,15 @@ uniform float iTime;
         )";
 }
 void Waveform::init_linkShaders() {
+    hotGLSL.callInRenderLoop(openGLContext);
+    return;
     // Create an instance of OpenGLShaderProgram
     shaderProgram.reset(new juce::OpenGLShaderProgram(openGLContext));
     if (shaderProgram->addVertexShader(vertexShader)
         && shaderProgram->addFragmentShader(fragmentShader)
-        && shaderProgram->link())
-    {}
+        && shaderProgram->link()) {
+        DBG("not glsl compile errors");
+    }
     else {
         // Oops - something went wrong with our shaders!
         // Check the output window of your IDE to see what the error might be.
